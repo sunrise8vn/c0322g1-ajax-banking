@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index</title>
+    <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/assets//fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>Customer information</h1>
+            <form id="frmCreate" action="">
+                <div class="row mt-3">
+                    <div class="col-lg-6">
+                        <label for="fullName" class="fw-bold">Full Name</label>
+                        <input type="text" id="fullName" name="fullName" class="form-control">
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="email" class="fw-bold">Email</label>
+                        <input type="text" id="email" name="email" class="form-control">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-6">
+                        <label for="phone" class="fw-bold">Phone</label>
+                        <input type="text" id="phone" name="phone" class="form-control">
+                    </div>
+                    <div class="col-lg-6">
+                        <label for="address" class="fw-bold">Address</label>
+                        <input type="text" id="address" name="address" class="form-control">
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-lg-3">
+                        <button type="button" id="btnCreate" class="btn btn-outline-primary">
+                            <i class="fa-solid fa-plus"></i>
+                            <span> Create</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </header>
+
+        <div class="content">
+            <table id="tbCustomer" class="table table-hover mt-3">
+                <thead>
+                    <tr>
+                        <th class="text-center">#</th>
+                        <th class="text-center">Full Name</th>
+                        <th class="text-center">Email</th>
+                        <th class="text-center">Phone</th>
+                        <th class="text-center">Address</th>
+                        <th class="text-center">Balance</th>
+                        <th colspan="5" class="text-center">Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- <tr>
+                        <td>1</td>
+                        <td>NVA</td>
+                        <td>nva@co.cc</td>
+                        <td class="text-center">2345</td>
+                        <td>28 NTP</td>
+                        <td class="text-end">0</td>
+                        <td>
+                            <button class="btn btn-outline-secondary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deposit">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Transfer">
+                                <i class="fa-solid fa-right-left"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr> -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- end container -->
+
+    <!-- Update Modal -->
+    <div class="modal fade" id="mdUpdate" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
+        aria-hidden="true">
+        <div class="modal-dialog modal-lg modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Modal update</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="frmUpdate" action="">
+                        <div class="row mt-3">
+                            <input type="hidden" id="idUp">
+                            <div class="col-lg-6">
+                                <label for="fullNameUp" class="fw-bold">Full Name</label>
+                                <input type="text" id="fullNameUp" name="fullNameUp" class="form-control">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="emailUp" class="fw-bold">Email</label>
+                                <input type="text" id="emailUp" name="emailUp" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row mt-3 mb-3">
+                            <div class="col-lg-6">
+                                <label for="phoneUp" class="fw-bold">Phone</label>
+                                <input type="text" id="phoneUp" name="phoneUp" class="form-control">
+                            </div>
+                            <div class="col-lg-6">
+                                <label for="addressUp" class="fw-bold">Address</label>
+                                <input type="text" id="addressUp" name="addressUp" class="form-control">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" id="btnUpdate" class="btn btn-outline-secondary">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                        Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/jquery/jquery-v3.6.0.min.js"></script>
+    <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <script src="/assets/js/app.model.js"></script>
+
+    <script>
+
+
+        function initTooltip() {
+            const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]')
+            const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
+        }
+
+        let customers = [];
+        let id = 1;
+
+        let customer = new Customer(id, 'NVA', 'nva@co.cc', '2345', '28 NTP', 0, 0);
+        customers.push(customer);
+        id++;
+
+        customer = new Customer(id, 'NVB', 'nvb@co.cc', '6789', '28 NTP', 0, 0);
+        customers.push(customer);
+        id++;
+
+        function drawCustomers(data) {
+
+            $('#tbCustomer tbody').empty();
+
+            $.each(data, (i, item) => {
+                let str = `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.fullName}</td>
+                        <td>${item.email}</td>
+                        <td class="text-center">${item.phone}</td>
+                        <td>${item.address}</td>
+                        <td class="text-end">${item.balance}</td>
+                        <td>
+                            <button class="btn btn-outline-secondary edit" data-id="${item.id}" data-fullname="${item.fullName}" data-email="${item.email}" data-phone="${item.phone}" data-address="${item.address}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deposit">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Transfer">
+                                <i class="fa-solid fa-right-left"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                let tbCustomer = $('#tbCustomer tbody');
+                tbCustomer.prepend(str);
+            })
+
+            initTooltip();
+
+            handleShowUpdateModal();
+
+        }
+
+        function handleShowUpdateModal() {
+            let btnUpdate = $(".edit");
+
+            btnUpdate.on('click', function () {
+
+                let id = $(this).data('id');
+                let fullName = $(this).data('fullname');
+                let email = $(this).data('email');
+                let phone = $(this).data('phone');
+                let address = $(this).data('address');
+
+                $("#idUp").val(id);
+                $("#fullNameUp").val(fullName);
+                $("#emailUp").val(email);
+                $("#phoneUp").val(phone);
+                $("#addressUp").val(address);
+
+                $("#mdUpdate").modal('show');
+            })
+        }
+
+        // drawCustomers();
+
+        getAllCustomers();
+
+        function getAllCustomers() {
+            $.ajax({
+                headers: {
+                    "Accept": "application/json",
+                    "Content-type": "application/json"
+                },
+                type: "GET",
+                url: 'http://localhost:3300/customers'
+            })
+            .done((data) => {
+                drawCustomers(data);
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            });
+        }
+
+        let btnCreate = $('#btnCreate');
+
+        btnCreate.on('click', () => {
+
+            let fullName = $('#fullName').val();
+            let email = $('#email').val();
+            let phone = $('#phone').val();
+            let address = $('#address').val();
+
+            customer = new Customer(0, fullName, email, phone, address, 0, 0);
+            delete customer.id;
+            // customers.push(customer);
+            // id++;
+
+            $.ajax({
+                headers: {
+                    "Accept": "application/json",
+                    "Content-type": "application/json"
+                },
+                type: "POST",
+                url: 'http://localhost:3300/customers',
+                data: JSON.stringify(customer)
+            })
+            .done((item) => {
+                let str = `
+                    <tr>
+                        <td>${item.id}</td>
+                        <td>${item.fullName}</td>
+                        <td>${item.email}</td>
+                        <td class="text-center">${item.phone}</td>
+                        <td>${item.address}</td>
+                        <td class="text-end">${item.balance}</td>
+                        <td>
+                            <button class="btn btn-outline-secondary edit" data-id="${item.id}" data-fullname="${item.fullName}" data-email="${item.email}" data-phone="${item.phone}" data-address="${item.address}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deposit">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Transfer">
+                                <i class="fa-solid fa-right-left"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
+
+                let tbCustomer = $('#tbCustomer tbody');
+                tbCustomer.prepend(str);
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            });
+
+            // drawCustomers();
+        });
+
+        let btnUpdate = $("#btnUpdate");
+
+        btnUpdate.on('click', () => {
+            let customerId = +$("#idUp").val();
+            let fullName = $('#fullNameUp').val();
+            let email = $('#emailUp').val();
+            let phone = $('#phoneUp').val();
+            let address = $('#addressUp').val();
+
+            // $.each(customers, (i, item) => {
+            //     if (item.id === customerId) {
+            //         customers[i].fullName = fullName;
+            //         customers[i].email = email;
+            //         customers[i].phone = phone;
+            //         customers[i].address = address;
+            //     }
+            // })
+
+            customer = new Customer(customerId, fullName, email, phone, address, 0, 0);
+
+            $.ajax({
+                headers: {
+                    "Accept": "application/json",
+                    "Content-type": "application/json"
+                },
+                type: "PUT",
+                url: 'http://localhost:3300/customers/' + customerId,
+                data: JSON.stringify(customer)
+            })
+            .done((data) => {
+                console.log(data);
+            })
+            .fail((jqXHR) => {
+                console.log(jqXHR);
+            });
+
+            // drawCustomers();
+
+            $("#mdUpdate").modal('hide');
+        });
+
+    </script>
+</body>
+
+</html>
