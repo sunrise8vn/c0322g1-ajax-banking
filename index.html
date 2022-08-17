@@ -8,6 +8,7 @@
     <title>Index</title>
     <link rel="stylesheet" href="/assets/bootstrap/css/bootstrap.min.css">
     <link rel="stylesheet" href="/assets//fontawesome/css/all.min.css">
+    <link rel="stylesheet" href="/assets/sweetalert/sweetalert2.min.css">
     <link rel="stylesheet" href="/assets/css/style.css">
 </head>
 
@@ -147,6 +148,7 @@
 
     <script src="/assets/jquery/jquery-v3.6.0.min.js"></script>
     <script src="/assets/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script src="/assets/sweetalert/sweetalert2.all.min.js"></script>
 
     <script src="/assets/js/app.model.js"></script>
 
@@ -158,16 +160,18 @@
             const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl))
         }
 
-        let customers = [];
-        let id = 1;
+        let customer = new Customer();
 
-        let customer = new Customer(id, 'NVA', 'nva@co.cc', '2345', '28 NTP', 0, 0);
-        customers.push(customer);
-        id++;
+        // let customers = [];
+        // let id = 1;
 
-        customer = new Customer(id, 'NVB', 'nvb@co.cc', '6789', '28 NTP', 0, 0);
-        customers.push(customer);
-        id++;
+        // let customer = new Customer(id, 'NVA', 'nva@co.cc', '2345', '28 NTP', 0, 0);
+        // customers.push(customer);
+        // id++;
+
+        // customer = new Customer(id, 'NVB', 'nvb@co.cc', '6789', '28 NTP', 0, 0);
+        // customers.push(customer);
+        // id++;
 
         function drawCustomers(data) {
 
@@ -175,7 +179,7 @@
 
             $.each(data, (i, item) => {
                 let str = `
-                    <tr>
+                    <tr id="tr_${item.id}">
                         <td>${item.id}</td>
                         <td>${item.fullName}</td>
                         <td>${item.email}</td>
@@ -183,27 +187,27 @@
                         <td>${item.address}</td>
                         <td class="text-end">${item.balance}</td>
                         <td>
-                            <button class="btn btn-outline-secondary edit" data-id="${item.id}" data-fullname="${item.fullName}" data-email="${item.email}" data-phone="${item.phone}" data-address="${item.address}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
+                            <button class="btn btn-outline-secondary edit" data-id="${item.id}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </button>
                         </td>
                         <td>
-                            <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deposit">
+                            <button class="btn btn-outline-success deposit" data-id="${item.id}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deposit">
                                 <i class="fa-solid fa-plus"></i>
                             </button>
                         </td>
                         <td>
-                            <button class="btn btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw">
+                            <button class="btn btn-outline-warning withdraw" data-id="${item.id}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw">
                                 <i class="fa-solid fa-minus"></i>
                             </button>
                         </td>
                         <td>
-                            <button class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Transfer">
+                            <button class="btn btn-outline-primary transfer" data-id="${item.id}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Transfer">
                                 <i class="fa-solid fa-right-left"></i>
                             </button>
                         </td>
                         <td>
-                            <button class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                            <button class="btn btn-outline-danger delete" data-id="${item.id}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
                                 <i class="fa-solid fa-trash-can"></i>
                             </button>
                         </td>
@@ -218,6 +222,29 @@
 
             handleShowUpdateModal();
 
+            handleShowDeleteConfirm();
+
+        }
+
+        function getCustomerById(id) {
+            return $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "GET",
+                url: "http://localhost:3300/customers/" + id
+            })
+            .done((data) => {
+                customer = data;
+            })
+            .fail((jqXHR) => {
+
+            })
+        }
+
+        function removeEventShowUpdateModal() {
+            $(".edit").off();
         }
 
         function handleShowUpdateModal() {
@@ -226,22 +253,69 @@
             btnUpdate.on('click', function () {
 
                 let id = $(this).data('id');
-                let fullName = $(this).data('fullname');
-                let email = $(this).data('email');
-                let phone = $(this).data('phone');
-                let address = $(this).data('address');
 
-                $("#idUp").val(id);
-                $("#fullNameUp").val(fullName);
-                $("#emailUp").val(email);
-                $("#phoneUp").val(phone);
-                $("#addressUp").val(address);
+                getCustomerById(id).then(() => {
+                    $("#idUp").val(customer.id);
+                    $("#fullNameUp").val(customer.fullName);
+                    $("#emailUp").val(customer.email);
+                    $("#phoneUp").val(customer.phone);
+                    $("#addressUp").val(customer.address);
 
-                $("#mdUpdate").modal('show');
+                    $("#mdUpdate").modal('show');
+                })
+                .catch(() => {
+                    Swal.fire({
+                        title: "Customer information invalid",
+                        icon: 'error',
+                    })
+                });
             })
         }
 
-        // drawCustomers();
+        function handleShowDeleteConfirm() {
+            let btnDelete = $(".delete");
+
+            btnDelete.on('click', function () {
+
+                let customerId = $(this).data('id');
+
+                Swal.fire({
+                    title: 'Are you sure?',
+                    text: "You won't be able to revert this!",
+                    icon: 'warning',
+                    showCancelButton: true,
+                    confirmButtonColor: '#3085d6',
+                    cancelButtonColor: '#d33',
+                    confirmButtonText: 'Yes, delete it!'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+
+                        $.ajax({
+                            headers: {
+                                "accept": "application/json",
+                                "content-type": "application/json"
+                            },
+                            type: "DELETE",
+                            url: "http://localhost:3300/customers/" + customerId
+                        })
+                        .done(() => {
+                            $("#tr_" + customerId).remove();
+
+                            Swal.fire({
+                                title: "The client has been deleted.",
+                                icon: 'success',
+                                showConfirmButton: false,
+                                timer: 2000,
+                                position: 'top-end',
+                            })
+                        })
+                        .fail((jqXHR) => {
+                            console.log(jqXHR);
+                        })
+                    }
+                })
+            })
+        }
 
         getAllCustomers();
 
@@ -254,12 +328,12 @@
                 type: "GET",
                 url: 'http://localhost:3300/customers'
             })
-            .done((data) => {
-                drawCustomers(data);
-            })
-            .fail((jqXHR) => {
-                console.log(jqXHR);
-            });
+                .done((data) => {
+                    drawCustomers(data);
+                })
+                .fail((jqXHR) => {
+                    console.log(jqXHR);
+                });
         }
 
         let btnCreate = $('#btnCreate');
@@ -273,8 +347,6 @@
 
             customer = new Customer(0, fullName, email, phone, address, 0, 0);
             delete customer.id;
-            // customers.push(customer);
-            // id++;
 
             $.ajax({
                 headers: {
@@ -285,9 +357,9 @@
                 url: 'http://localhost:3300/customers',
                 data: JSON.stringify(customer)
             })
-            .done((item) => {
-                let str = `
-                    <tr>
+                .done((item) => {
+                    let str = `
+                    <tr id="tr_${item.id}">
                         <td>${item.id}</td>
                         <td>${item.fullName}</td>
                         <td>${item.email}</td>
@@ -322,12 +394,16 @@
                     </tr>
                 `;
 
-                let tbCustomer = $('#tbCustomer tbody');
-                tbCustomer.prepend(str);
-            })
-            .fail((jqXHR) => {
-                console.log(jqXHR);
-            });
+                    let tbCustomer = $('#tbCustomer tbody');
+                    tbCustomer.prepend(str);
+
+                    initTooltip();
+
+                    handleShowUpdateModal();
+                })
+                .fail((jqXHR) => {
+                    console.log(jqXHR);
+                });
 
             // drawCustomers();
         });
@@ -341,15 +417,6 @@
             let phone = $('#phoneUp').val();
             let address = $('#addressUp').val();
 
-            // $.each(customers, (i, item) => {
-            //     if (item.id === customerId) {
-            //         customers[i].fullName = fullName;
-            //         customers[i].email = email;
-            //         customers[i].phone = phone;
-            //         customers[i].address = address;
-            //     }
-            // })
-
             customer = new Customer(customerId, fullName, email, phone, address, 0, 0);
 
             $.ajax({
@@ -361,17 +428,61 @@
                 url: 'http://localhost:3300/customers/' + customerId,
                 data: JSON.stringify(customer)
             })
-            .done((data) => {
-                console.log(data);
-            })
-            .fail((jqXHR) => {
-                console.log(jqXHR);
-            });
+                .done((item) => {
 
-            // drawCustomers();
+                    let str = `
+                    <tr id="tr_${item.id}">
+                        <td>${item.id}</td>
+                        <td>${item.fullName}</td>
+                        <td>${item.email}</td>
+                        <td class="text-center">${item.phone}</td>
+                        <td>${item.address}</td>
+                        <td class="text-end">${item.balance}</td>
+                        <td>
+                            <button class="btn btn-outline-secondary edit" data-id="${item.id}" data-fullname="${item.fullName}" data-email="${item.email}" data-phone="${item.phone}" data-address="${item.address}" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Update">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-success" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Deposit">
+                                <i class="fa-solid fa-plus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-warning" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Withdraw">
+                                <i class="fa-solid fa-minus"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-primary" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Transfer">
+                                <i class="fa-solid fa-right-left"></i>
+                            </button>
+                        </td>
+                        <td>
+                            <button class="btn btn-outline-danger" data-bs-toggle="tooltip" data-bs-placement="top" data-bs-title="Delete">
+                                <i class="fa-solid fa-trash-can"></i>
+                            </button>
+                        </td>
+                    </tr>
+                `;
 
-            $("#mdUpdate").modal('hide');
+                    let currentRow = $("#tr_" + item.id);
+                    currentRow.replaceWith(str);
+
+                    $("#mdUpdate").modal('hide');
+
+                    initTooltip();
+
+                    removeEventShowUpdateModal();
+
+                    handleShowUpdateModal();
+                })
+                .fail((jqXHR) => {
+                    console.log(jqXHR);
+                });
         });
+
+
 
     </script>
 </body>
