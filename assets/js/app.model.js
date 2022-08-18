@@ -9,3 +9,17 @@ class Customer {
         this.deleted = deleted;
     }
 }
+
+class Deposit {
+    constructor(id, customerId, transactionAmount) {
+        this.id = id;
+        this.customerId = customerId;
+        this.transactionAmount = transactionAmount;
+    }
+}
+
+class Withdraw extends Deposit {
+    constructor() {
+        super();
+    }
+}
