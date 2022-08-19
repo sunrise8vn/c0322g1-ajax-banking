@@ -1,0 +1,15 @@
+
+
+GET http://localhost:3300/customers
+
+POST http://localhost:3300/customers
+Content-Type: application/json
+
+{
+  "fullName": "NVD",
+  "email": "nvd@co.cc",
+  "phone": "2345",
+  "address": "28 NTP",
+  "balance": 0,
+  "deleted": 0
+}

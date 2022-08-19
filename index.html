@@ -391,8 +391,8 @@
             let phone = $('#phone').val();
             let address = $('#address').val();
 
-            customer = new Customer(0, fullName, email, phone, address, 0, 0);
-            delete customer.id;
+            customer = new Customer(null, fullName, email, phone, address, 0, 0);
+            // delete customer.id;
 
             $.ajax({
                 headers: {
@@ -464,7 +464,11 @@
             let phone = $('#phoneUp').val();
             let address = $('#addressUp').val();
 
-            customer = new Customer(customerId, fullName, email, phone, address, 0, 0);
+            // customer = new Customer(customerId, fullName, email, phone, address, 0, 0);
+            customer.fullName = fullName;
+            customer.email = email;
+            customer.phone = phone;
+            customer.address = address;
 
             $.ajax({
                 headers: {
@@ -710,7 +714,6 @@
         $.validator.addMethod("isNumberWithSpace", function (value, element) {
             return this.optional(element) || /^\s*[0-9,\s]+\s*$/i.test(value);
         }, "Vui lòng nhập giá trị số");
-
 
     </script>
 </body>
