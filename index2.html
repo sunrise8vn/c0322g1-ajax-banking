@@ -63,7 +63,19 @@
                         <th class="text-center">Address</th>                     
                     </tr>
                 </thead>
-                <tbody></tbody>
+                <tbody>
+                    <!-- <tr>
+                        <td class="text-center">#</td>
+                        <td class="text-center">Full Name</td>
+                        <td class="text-center">Email</td>
+                        <td class="text-center">Phone</td>
+                        <td class="text-end">Balance</td>
+                        <td class="text-center">Province</td>
+                        <td class="text-center">District</td>
+                        <td class="text-center">Ward</td>
+                        <td class="text-center">Address</td>                     
+                    </tr> -->
+                </tbody>
             </table>
         </div>
     </div>
@@ -125,7 +137,29 @@
         </div>
     </div>
 
-
+    <footer>
+        <button type="button" class="btn btn-secondary edit" title="Edit" data-toggle="tooltip">
+            <i class="fa fa-pencil-square-o" aria-hidden="true"></i>
+            Update
+        </button>
+        <button type="button" class="btn btn-success deposit" title="Deposit" data-toggle="tooltip">
+            <i class="fa fa-plus" aria-hidden="true"></i>
+            Deposit
+        </button>
+        <button type="button" class="btn btn-warning withdraw" title="Withdraw" data-toggle="tooltip">
+            <i class="fa fa-minus" aria-hidden="true"></i>
+            Withdraw
+        </button>
+        <button type="button" class="btn btn-primary transfer" title="Transfer" data-toggle="tooltip">
+            <i class="fa fa-exchange" aria-hidden="true"></i>
+            Transfer
+        </button>
+        <button type="button" class="btn btn-danger suspended" title="Suspended" data-toggle="tooltip">
+            <i class="fa fa-ban" aria-hidden="true"></i>
+            Suspended
+        </button>
+    </footer>
+        
     <!-- Update Modal -->
     <div class="modal fade" id="mdUpdate" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false"
         aria-hidden="true">
@@ -226,6 +260,13 @@
     <script src="/assets/js/app.model.js"></script>
 
     <script>
+
+
+        let locationRegion = new LocationRegion();
+        let customer = new Customer();
+        let deposit = new Deposit();
+
+
         $("#btnCreate").on('click', () => {
             $("#mdCreate").modal('show');
         });
@@ -300,6 +341,112 @@
                 getAllWardsByDistrictId(districtId);
             });
         });
+
+
+        function handleTableTrClick() {
+            $("#tbCustomer tbody tr").on('click', function () {
+                let customerId = $(this).data('id');
+
+                $.ajax({
+                    headers: {
+                        "accept": "application/json",
+                        "content-type": "application/json"
+                    },
+                    type: "GET",
+                    url: "http://localhost:8089/api/customers/" + customerId
+                })
+                .done((data) => {
+                    customer = data;
+
+                    $("#customerIdDep").val(customer.id);
+                    $("#fullNameDep").val(customer.fullName);
+                    $("#balanceDep").val(customer.balance);
+                    // $("#transactionAmountDep").val();
+
+                    $("#mdDeposit").modal('show');
+
+
+                })
+                .fail((jqXHR) => {
+
+                });
+
+            })
+        }
+
+
+        $("#btnDeposit").on('click', () => {
+            deposit.id = 0;
+            deposit.customerId = $("#customerIdDep").val();
+            deposit.transactionAmount = $("#transactionAmountDep").val();
+
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "POST",
+                url: "http://localhost:8089/api/customers/deposit",
+                data: JSON.stringify(deposit)
+            })
+            .done((data) => {
+                console.log(data)
+            })
+            .fail((jqXHR) => {
+                let err = jqXHR.responseJSON.message;
+
+                let str = `<label class="error" for="err">${err}</label>`;
+
+                $("#mdDeposit .modal-body .modal-alert-danger").addClass('show').removeClass('hide');
+                $("#mdDeposit .modal-body .modal-alert-danger").append(str);
+
+            });
+        });
+
+
+        function getAllCustomers() {
+            $.ajax({
+                headers: {
+                    "accept": "application/json",
+                    "content-type": "application/json"
+                },
+                type: "GET",
+                url: "http://localhost:8089/api/customers"
+            })
+            .done((data) => {
+
+                $.each(data, (i, item) => {
+                    customer = item;
+                    locationRegion = customer.locationRegion;
+
+                    let str = `
+                        <tr data-id="${customer.id}">
+                            <td class="text-center">${customer.id}</td>
+                            <td class="text-center">${customer.fullName}</td>
+                            <td class="text-center">${customer.email}</td>
+                            <td class="text-center">${customer.phone}</td>
+                            <td class="text-end">${customer.balance}</td>
+                            <td class="text-center">${locationRegion.provinceName}</td>
+                            <td class="text-center">${locationRegion.districtName}</td>
+                            <td class="text-center">${locationRegion.wardName}</td>
+                            <td class="text-center">${locationRegion.address}</td>                     
+                        </tr>
+                    `;
+
+                    $("#tbCustomer tbody").prepend(str);
+                    
+                });
+
+                handleTableTrClick();
+            })
+            .fail((jqXHR) => {
+
+            })
+        }
+
+        getAllCustomers();
+
+
 
         
     </script>
